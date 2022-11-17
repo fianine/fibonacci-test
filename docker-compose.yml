@@ -1,0 +1,36 @@
+version: '3'
+services:
+    main:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: 'php artisan serve --host=0.0.0.0'
+        ports:
+            - 8000:8000
+        depends_on:
+            - mysql
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        environment:
+            MYSQL_DATABASE: laravel
+            MYSQL_USER: admin
+            MYSQL_ROOT: admin
+            MYSQL_PASSWORD: admin
+            MYSQL_ROOT_PASSWORD: admin
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        ports:
+            - 3306:3306
+    migration:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: 'php artisan migrate'
+        depends_on:
+            - mysql
+    seeder:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: 'php artisan db:seed --class=UserSeeder'
+        depends_on:
+            - mysql
